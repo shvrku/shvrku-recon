@@ -14,6 +14,8 @@
 :root,
 html[data-theme="dark"] {
   --chrome-margin: 32px;
+  /* Apple-like continuous corner for media + reading cards */
+  --radius-apple: 18px;
   --bg-hero: #080807;
   --bg: #000000;
   --bg-page: #000000;
@@ -589,7 +591,11 @@ html[data-theme="light"] .hero-grain {
 .prose__figure {
   display: block;
   margin-block: 1.75rem;
-  border-radius: 0.5rem;
+}
+
+/* Apple-like radius on in-article blog photos only — not the lightbox. */
+.blog-photo {
+  border-radius: var(--radius-apple);
 }
 
 /* Mobile menu: atmosphere under fixed chrome so logo / clock / toggle stay put. */
@@ -598,8 +604,8 @@ html[data-theme="light"] .hero-grain {
   inset: 0;
   z-index: 45;
   pointer-events: none;
+  /* GSAP owns opacity/visibility via autoAlpha — don't snap-hide on close. */
   visibility: hidden;
-  opacity: 0;
 }
 
 .mobile-menu[data-open="true"] {
@@ -709,6 +715,35 @@ html[data-theme="light"] .hero-grain {
 .menu-atmosphere__grain {
   opacity: 0.38;
   z-index: 2;
+}
+
+/* Lightbox frost — same mist/bloom stack, dialed to see-through glass. */
+.menu-atmosphere--frost .menu-atmosphere__base {
+  background: rgba(8, 8, 7, 0.28);
+}
+
+.menu-atmosphere--frost .menu-atmosphere__mist {
+  opacity: 0.42;
+}
+
+.menu-atmosphere--frost .menu-atmosphere__bloom {
+  opacity: 0.28;
+}
+
+.menu-atmosphere--frost .menu-atmosphere__veil {
+  background:
+    radial-gradient(
+      120% 90% at 50% 40%,
+      rgba(255, 255, 255, 0.03) 0%,
+      rgba(8, 8, 7, 0.18) 55%,
+      rgba(8, 8, 7, 0.4) 100%
+    );
+  backdrop-filter: blur(28px) saturate(1.05);
+  -webkit-backdrop-filter: blur(28px) saturate(1.05);
+}
+
+.menu-atmosphere--frost .menu-atmosphere__grain {
+  opacity: 0.22;
 }
 
 @keyframes menu-bloom-a {

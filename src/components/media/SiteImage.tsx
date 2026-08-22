@@ -1,11 +1,20 @@
 import Image, { type ImageProps } from "next/image";
+import { IMAGE_QUALITY } from "@/lib/image";
 
 type SiteImageProps = ImageProps & {
   priority?: boolean;
 };
 
-/** Shared defaults — lazy unless above-the-fold, WebP/AVIF via next.config. */
-export function SiteImage({ priority, quality = 85, loading, ...props }: SiteImageProps) {
+/**
+ * Shared Next.js image wrapper — AVIF/WebP + responsive sizes via next.config.
+ * Use this for every DOM photo so nothing bypasses the Vercel optimizer.
+ */
+export function SiteImage({
+  priority,
+  quality = IMAGE_QUALITY,
+  loading,
+  ...props
+}: SiteImageProps) {
   return (
     <Image
       {...props}

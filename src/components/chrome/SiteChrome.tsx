@@ -24,6 +24,7 @@ import { BlogThemeToggle } from "./BlogThemeToggle";
 
 export function SiteChrome() {
   const [menu, setMenu] = useState(false);
+  const [menuPaint, setMenuPaint] = useState(false);
   const pathname = usePathname();
   const lenis = useLenis();
   const { navigate } = usePageTransition();
@@ -37,7 +38,11 @@ export function SiteChrome() {
   }, [pathname]);
 
   useEffect(() => {
-    if (!menu) return;
+    if (menu) setMenuPaint(true);
+  }, [menu]);
+
+  useEffect(() => {
+    if (!menuPaint) return;
     lenis?.stop();
     const prev = document.documentElement.style.overflow;
     document.documentElement.style.overflow = "hidden";
@@ -45,49 +50,75 @@ export function SiteChrome() {
       lenis?.start();
       document.documentElement.style.overflow = prev;
     };
-  }, [menu, lenis]);
+  }, [menuPaint, lenis]);
 
   useEffect(() => {
     const menuEl = menuRef.current;
     const nav = navRef.current;
-    if (!menuEl || !nav) return;
+    if (!menuEl || !nav || !menuPaint) return;
 
     const links = gsap.utils.toArray<HTMLElement>(
       nav.querySelectorAll(".mobile-menu__link, .mobile-menu__mail"),
     );
 
-    if (!menu) {
-      gsap.killTweensOf(menuEl);
-      if (links.length) gsap.killTweensOf(links);
-      gsap.set(menuEl, { autoAlpha: 0 });
-      if (links.length) gsap.set(links, { clearProps: "transform,opacity" });
-      return;
-    }
+    gsap.killTweensOf(menuEl);
+    if (links.length) gsap.killTweensOf(links);
 
     if (prefersReducedMotion()) {
-      gsap.set(menuEl, { autoAlpha: 1 });
-      gsap.set(links, { autoAlpha: 1, y: 0 });
+      if (menu) {
+        gsap.set(menuEl, { autoAlpha: 1 });
+        gsap.set(links, { autoAlpha: 1, y: 0 });
+      } else {
+        gsap.set(menuEl, { autoAlpha: 0 });
+        if (links.length) gsap.set(links, { clearProps: "transform,opacity" });
+        setMenuPaint(false);
+      }
       return;
     }
 
-    gsap.fromTo(
-      menuEl,
-      { autoAlpha: 0 },
-      { autoAlpha: 1, duration: 0.4, ease: EASE.inOut },
-    );
-    gsap.fromTo(
-      links,
-      { y: "0.55em", autoAlpha: 0 },
-      {
-        y: 0,
-        autoAlpha: 1,
-        duration: 0.55,
-        stagger: 0.05,
-        delay: 0.05,
-        ease: EASE.out,
+    if (menu) {
+      gsap.fromTo(
+        menuEl,
+        { autoAlpha: 0 },
+        { autoAlpha: 1, duration: 0.4, ease: EASE.inOut },
+      );
+      gsap.fromTo(
+        links,
+        { y: "0.55em", autoAlpha: 0 },
+        {
+          y: 0,
+          autoAlpha: 1,
+          duration: 0.55,
+          stagger: 0.05,
+          delay: 0.05,
+          ease: EASE.out,
+        },
+      );
+      return;
+    }
+
+    // Close = reverse of entrance (links drop away bottomward, then shell fades).
+    const tl = gsap.timeline({
+      onComplete: () => {
+        if (links.length) gsap.set(links, { clearProps: "transform,opacity" });
+        setMenuPaint(false);
       },
+    });
+    if (links.length) {
+      tl.to(links, {
+        y: "0.55em",
+        autoAlpha: 0,
+        duration: 0.35,
+        stagger: { each: 0.04, from: "end" },
+        ease: EASE.inOut,
+      });
+    }
+    tl.to(
+      menuEl,
+      { autoAlpha: 0, duration: 0.32, ease: EASE.inOut },
+      links.length ? "-=0.12" : 0,
     );
-  }, [menu]);
+  }, [menu, menuPaint]);
 
   const goWork = () => {
     if (pathname === "/") {
@@ -131,11 +162,11 @@ export function SiteChrome() {
       <div
         ref={menuRef}
         className="mobile-menu md:hidden"
-        data-open={menu ? "true" : "false"}
+        data-open={menuPaint ? "true" : "false"}
         aria-hidden={!menu}
       >
         <div className="mobile-menu__field">
-          {menu ? <MenuAtmosphere /> : null}
+          {menuPaint ? <MenuAtmosphere /> : null}
         </div>
         <nav
           ref={navRef}

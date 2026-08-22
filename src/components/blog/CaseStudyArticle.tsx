@@ -7,7 +7,7 @@ import { BlogFooter } from "@/components/chrome/BlogFooter";
 import { formatBlogDate } from "@/lib/dates";
 import { pageCharacters } from "@/lib/page-characters";
 import { MarkdownContent } from "@/components/blog/MarkdownContent";
-import { SiteImage } from "@/components/media/SiteImage";
+import { BlogPhoto } from "@/components/media/BlogPhoto";
 
 type CaseStudyArticleProps = {
   study: CaseStudy;
@@ -65,13 +65,12 @@ export function CaseStudyArticle({ study }: CaseStudyArticleProps) {
         </p>
 
         {study.image ? (
-          <div className="relative mt-10 aspect-[16/9] w-full overflow-hidden rounded-lg bg-[var(--bg-hero)]">
-            <SiteImage
+          <div className="mt-10">
+            <BlogPhoto
               src={study.image}
               alt={study.title}
-              fill
-              className="object-cover"
-              sizes="(min-width: 880px) 880px, 100vw"
+              variant="hero"
+              priority
             />
           </div>
         ) : null}

@@ -1,7 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { Element } from "hast";
-import { SiteImage } from "@/components/media/SiteImage";
+import { BlogPhoto } from "@/components/media/BlogPhoto";
 
 type MarkdownContentProps = {
   content: string;
@@ -31,14 +31,8 @@ export function MarkdownContent({ content }: MarkdownContentProps) {
           img: ({ src, alt }) => {
             if (!src || typeof src !== "string") return null;
             return (
-              <span className="prose__figure relative block aspect-[16/10] w-full overflow-hidden bg-[var(--bg-hero)]">
-                <SiteImage
-                  src={src}
-                  alt={alt ?? ""}
-                  fill
-                  className="object-cover"
-                  sizes="(min-width: 880px) 880px, 100vw"
-                />
+              <span className="prose__figure">
+                <BlogPhoto src={src} alt={alt ?? ""} variant="inline" />
               </span>
             );
           },

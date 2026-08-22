@@ -21,7 +21,7 @@ function makeGrainUrl(size = 256) {
 }
 
 /** Hero-like grey mist + grain + soft blurs — no liquid WebGL. */
-export function MenuAtmosphere() {
+export function MenuAtmosphere({ frost = false }: { frost?: boolean }) {
   const grainRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,7 +31,10 @@ export function MenuAtmosphere() {
   }, []);
 
   return (
-    <div className="menu-atmosphere" aria-hidden="true">
+    <div
+      className={frost ? "menu-atmosphere menu-atmosphere--frost" : "menu-atmosphere"}
+      aria-hidden="true"
+    >
       <div className="menu-atmosphere__base" />
       <div className="menu-atmosphere__mist" />
       <div className="menu-atmosphere__bloom menu-atmosphere__bloom--a" />

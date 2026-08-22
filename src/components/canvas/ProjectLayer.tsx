@@ -9,6 +9,7 @@ import { getLenisScrollSnapshot } from "@/lib/scroll-bus";
 import { getPointerSnapshot } from "@/lib/pointer-bus";
 import { getPhotoRevealProgress } from "@/lib/photo-reveal";
 import { DOM_SYNC_FRAG, DOM_SYNC_VERT } from "@/shaders/materials";
+import { optimizedImageSrc, textureOptimizerWidth } from "@/lib/image";
 
 function createCurlStrengthSampler() {
   let previousScrollY: number | null = null;
@@ -66,21 +67,36 @@ export function ProjectLayer() {
 
   useEffect(() => {
     const maxAniso = gl.capabilities.getMaxAnisotropy();
+    const configure = (tex: THREE.Texture) => {
+      tex.colorSpace = THREE.NoColorSpace;
+      tex.minFilter = THREE.LinearFilter;
+      tex.anisotropy = maxAniso;
+    };
+
     layered.forEach((p) => {
-      const base = loader.load(p.image);
-      const hoverTex = loader.load(p.hover);
-      for (const tex of [base, hoverTex]) {
-        tex.colorSpace = THREE.NoColorSpace;
-        tex.minFilter = THREE.LinearFilter;
-        tex.anisotropy = maxAniso;
-      }
+      const width = textureOptimizerWidth(p.slug);
+      const baseSrc = optimizedImageSrc(p.image, width);
+      const hoverSrc =
+        p.hover === p.image ? baseSrc : optimizedImageSrc(p.hover, width);
+      const base = loader.load(baseSrc);
+      configure(base);
+      const hoverTex =
+        hoverSrc === baseSrc
+          ? base
+          : (() => {
+              const t = loader.load(hoverSrc);
+              configure(t);
+              return t;
+            })();
       textures.current[p.slug] = { base, hover: hoverTex };
     });
+
     return () => {
       Object.values(textures.current).forEach((t) => {
         t.base.dispose();
         if (t.hover !== t.base) t.hover.dispose();
       });
+      textures.current = {};
     };
   }, [gl, loader]);
 

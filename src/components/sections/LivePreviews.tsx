@@ -5,9 +5,10 @@ import { site } from "@/lib/site";
 import { Atmosphere } from "@/components/effects/Atmosphere";
 import { HeroWordmark } from "@/components/sections/HeroWordmark";
 import { Planet } from "@/components/chrome/Planet";
+import { SiteImage } from "@/components/media/SiteImage";
 import { cn } from "@/lib/cn";
 
-type PreviewMode = "og" | "favicon";
+type PreviewMode = "og" | "logo" | "logo-wide";
 
 function LiveClockWeather() {
   const [clock, setClock] = useState("--:--");
@@ -67,16 +68,40 @@ function OgLivePreview() {
   );
 }
 
-function FaviconLivePreview() {
+/** Square logo preview — mark inset like an app icon (clear margin to the frame edge). */
+function LogoLivePreview() {
   return (
-    <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center p-[18%]">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/logo.svg"
-        alt=""
-        className="h-full w-full object-contain"
-        draggable={false}
-      />
+    <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+      <div className="relative aspect-square h-[60%] w-[60%]">
+        <SiteImage
+          src="/logo.svg"
+          alt=""
+          fill
+          className="object-contain"
+          sizes="32vw"
+          unoptimized
+          draggable={false}
+        />
+      </div>
+    </div>
+  );
+}
+
+/** Wide (~16:9) wallpaper with a larger centered logo.svg — no wordmark chrome. */
+function LogoWideLivePreview() {
+  return (
+    <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+      <div className="relative aspect-square h-[64%] w-auto max-w-[52%]">
+        <SiteImage
+          src="/logo.svg"
+          alt=""
+          fill
+          className="object-contain"
+          sizes="(min-width: 1200px) 480px, 48vw"
+          unoptimized
+          draggable={false}
+        />
+      </div>
     </div>
   );
 }
@@ -88,9 +113,14 @@ const MODES: { id: PreviewMode; label: string; hint: string }[] = [
     hint: "Screenshot · 1200×630 · save as public/og.png",
   },
   {
-    id: "favicon",
-    label: "Favicon",
-    hint: "Screenshot · 512×512 · save as public/favicon.ico",
+    id: "logo",
+    label: "Logo",
+    hint: "Screenshot · 512×512 · export as public/favicon.ico",
+  },
+  {
+    id: "logo-wide",
+    label: "Logo Wide",
+    hint: "Screenshot · 1200×630 (~16:9) · logo.svg centered · save as public/wallpaper.png",
   },
 ];
 
@@ -127,12 +157,20 @@ export function LivePreviews() {
       <div
         className={cn(
           "og-preview-frame",
-          mode === "og" ? "og-preview-frame--og" : "og-preview-frame--icon",
+          mode === "logo"
+            ? "og-preview-frame--icon"
+            : "og-preview-frame--og",
         )}
       >
         <div className="hero-stage relative h-full w-full overflow-hidden">
           <Atmosphere crushBottom={false} />
-          {mode === "og" ? <OgLivePreview /> : <FaviconLivePreview />}
+          {mode === "og" ? (
+            <OgLivePreview />
+          ) : mode === "logo" ? (
+            <LogoLivePreview />
+          ) : (
+            <LogoWideLivePreview />
+          )}
         </div>
       </div>
 
