@@ -33,7 +33,15 @@ export const portrait = {
   hover: "/images/portrait.png",
   /** Scroll curl only — no hover color reveal. */
   curlOnly: true,
+  /** Matches project cards — see photoCurl. */
+  curlScale: 1,
 };
+
+/** Shared scroll-curl tuning for homepage WebGL photos (portrait + projects). */
+export const photoCurl = {
+  maxStrength: 0.05,
+  velocityDivisor: 1050,
+} as const;
 
 export const site = {
   /** Short mark — hero wordmark, footer, copyright. */
@@ -45,23 +53,20 @@ export const site = {
   role: "System Architect & Engineer",
   tagline: "Engineering systems. Designed with care.",
   taglineLines: ["Engineering systems.", "Designed with care."],
-  headline: ["Bringing craft & taste", "to digital work."],
+  headline: ["Gracefully designing", "digital experiences."],
   bio: "I lead design engineering and AI exploration, shaping products where interface, systems, and model behavior meet. Outside commissioned work, I build tools that make teams faster without making them careless.",
   profileLead:
-    "Steering agents to build experices, creating the next generation of digital products.",
+    "Steering agents to build experices.",
   profileBody:
     "I'm currently at Hinthar working on their School Management System, and previously shipped shvrku-site under the SHVRKU identity.",
   timezone: "Asia/Yangon",
   timezoneLabel: "YGN",
   weather: { lat: 16.8409, lon: 96.1735 },
   footerQuote: "Refuse to be underestimated.",
-  /** Placeholder address — scramble animates into this fixed string. */
-  email: "%^&*@gmail.com",
+  email: "shvrku@gmail.com",
   year: 2026,
-  socials: [
-    { label: "Twitter/X", href: "https://x.com/shvrku" },
-    { label: "GitHub", href: "https://github.com/shvrku" },
-    { label: "Figma", href: "https://www.figma.com/@shvrku" },
+  socials: [,
+    { label: "GitHub", href: "https://github.com/shvrku" },,
   ],
 };
 

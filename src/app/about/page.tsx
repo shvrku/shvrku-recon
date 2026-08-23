@@ -90,6 +90,14 @@ export default function AboutPage() {
             SHVRKU
           </Link>{" "}
           identity.
+          <br />
+          Also special credits to the AI models and especially to{" "}
+          <Link href="https://haoqi.design/" className="hit-dash text-[var(--fg)] underline">
+            Haoqi Design
+          </Link>{" "}
+          and <Link href="https://bymonolog.com/" className="hit-dash text-[var(--fg)] underline">
+            Monolog
+          </Link> for the inspiration for the website design.
         </p>
 
         <a

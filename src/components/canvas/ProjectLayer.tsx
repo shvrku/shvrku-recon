@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import { portrait, projects } from "@/lib/site";
+import { portrait, projects, photoCurl } from "@/lib/site";
 import { getDomTargets } from "@/lib/dom-targets";
 import { getLenisScrollSnapshot } from "@/lib/scroll-bus";
 import { getPointerSnapshot } from "@/lib/pointer-bus";
@@ -19,11 +19,15 @@ function createCurlStrengthSampler() {
     const velocity =
       previousScrollY == null ? 0 : Math.abs(scrollY - previousScrollY) / dt;
     previousScrollY = scrollY;
-    const target = THREE.MathUtils.clamp(velocity / 900, 0, 1);
+    const target = THREE.MathUtils.clamp(
+      velocity / photoCurl.velocityDivisor,
+      0,
+      1,
+    );
     const tau = target > activity ? 0.025 : 0.175;
     const alpha = 1 - Math.exp(-dt / tau);
     activity += (target - activity) * alpha;
-    return 0.07 * activity;
+    return photoCurl.maxStrength * activity;
   };
 }
 
@@ -32,6 +36,7 @@ type LayeredPhoto = {
   image: string;
   hover: string;
   curlOnly?: boolean;
+  curlScale?: number;
 };
 
 const layered: LayeredPhoto[] = [portrait, ...projects];
@@ -194,7 +199,9 @@ export function ProjectLayer() {
       const rh = rect.height / vh;
       mat.uniforms.uRect.value.set(x, y, rw, rh);
       mat.uniforms.uHoverRevealProgress.value = hover.current[p.slug];
-      mat.uniforms.uCurlStrength.value = reduced ? 0 : curlStrength;
+      mat.uniforms.uCurlStrength.value = reduced
+        ? 0
+        : curlStrength * (p.curlScale ?? 1);
       mat.uniforms.uCurlOnly.value = curlOnly ? 1 : 0;
       mat.uniforms.uRevealProgress.value = reduced
         ? 1
