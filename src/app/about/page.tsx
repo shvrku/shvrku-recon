@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { site } from "@/lib/site";
 import { usePageTransition } from "@/lib/page-transition";
@@ -7,11 +8,13 @@ import { ScrambleText } from "@/components/chrome/ScrambleText";
 import { BlogFooter } from "@/components/chrome/BlogFooter";
 import { pageCharacters } from "@/lib/page-characters";
 import { SiteImage } from "@/components/media/SiteImage";
+import { PortraitSignatureInline } from "@/components/effects/PortraitSignature";
 
-const ABOUT_UPDATED = "2026-08-22";
+const ABOUT_UPDATED = "2026-08-23";
 
 export default function AboutPage() {
   const { navigate } = usePageTransition();
+  const photoRef = useRef<HTMLDivElement>(null);
   const characters = pageCharacters(
     site.fullName,
     site.role,
@@ -46,15 +49,21 @@ export default function AboutPage() {
           </p>
         </header>
 
-        <div className="relative mt-10 aspect-square w-full max-w-[420px] overflow-hidden bg-[var(--bg-hero)]">
-          <SiteImage
-            src="/images/portrait.png"
-            alt={site.fullName}
-            fill
-            className="object-cover"
-            sizes="(min-width: 880px) 420px, 80vw"
-            priority
-          />
+        <div className="relative mt-10 aspect-square w-full max-w-[420px] overflow-visible">
+          <div
+            ref={photoRef}
+            className="relative aspect-square w-full overflow-hidden bg-[var(--bg-hero)]"
+          >
+            <SiteImage
+              src="/images/portrait.png"
+              alt={site.fullName}
+              fill
+              className="object-cover"
+              sizes="(min-width: 880px) 420px, 80vw"
+              priority
+            />
+          </div>
+          <PortraitSignatureInline anchorRef={photoRef} entryDelay={0.5} />
         </div>
 
         <p className="mt-10 max-w-[42ch] text-[7vw] leading-[0.95] font-bold tracking-tight lg:text-[2rem]">
@@ -65,23 +74,22 @@ export default function AboutPage() {
         </p>
 
         <p className="mt-8 max-w-[46ch] font-mono text-sm leading-relaxed text-[var(--fg-muted)]">
-          I&apos;m building{" "}
-          <Link href="/blog/helix" className="hit-dash text-[var(--fg)] underline">
-            Helix
+          I&apos;m currently at Hinthar on their{" "}
+          <Link
+            href="/blog/hinthar-sms"
+            className="hit-dash text-[var(--fg)] underline"
+          >
+            School Management System
           </Link>
-          , and previously worked on{" "}
-          <Link href="/blog/drift" className="hit-dash text-[var(--fg)] underline">
-            Drift
-          </Link>
-          ,{" "}
-          <Link href="/blog/lattice" className="hit-dash text-[var(--fg)] underline">
-            Lattice
-          </Link>
-          , and{" "}
-          <Link href="/blog/umbra" className="hit-dash text-[var(--fg)] underline">
-            Umbra
-          </Link>
-          .
+          , and previously shipped{" "}
+          <Link href="/blog/shvrku-site" className="hit-dash text-[var(--fg)] underline">
+            shvrku-site
+          </Link>{" "}
+          under the{" "}
+          <Link href="/blog/shvrku" className="hit-dash text-[var(--fg)] underline">
+            SHVRKU
+          </Link>{" "}
+          identity.
         </p>
 
         <a

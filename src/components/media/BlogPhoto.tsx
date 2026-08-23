@@ -20,8 +20,12 @@ type PhotoLightboxProps = {
   onClose: () => void;
 };
 
+const VEIL_BLUR = "blur(40px) saturate(1.25)";
+const VEIL_CLEAR = "blur(0px) saturate(1)";
+
 export function PhotoLightbox({ src, alt, open, onClose }: PhotoLightboxProps) {
   const titleId = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const veilRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
@@ -29,19 +33,31 @@ export function PhotoLightbox({ src, alt, open, onClose }: PhotoLightboxProps) {
   const enteredRef = useRef(false);
 
   const animateIn = useCallback(() => {
+    const root = rootRef.current;
     const veil = veilRef.current;
     const content = contentRef.current;
-    if (!veil || !content) return;
-    gsap.killTweensOf([veil, content]);
+    if (!root || !veil || !content) return;
+    gsap.killTweensOf([root, veil, content]);
 
     if (prefersReducedMotion()) {
-      gsap.set(veil, { backgroundColor: "rgba(0,0,0,0.45)" });
+      gsap.set(root, { autoAlpha: 1 });
+      gsap.set(veil, {
+        backgroundColor: "rgba(0,0,0,0.45)",
+        backdropFilter: VEIL_BLUR,
+        webkitBackdropFilter: VEIL_BLUR,
+      });
       gsap.set(content, { autoAlpha: 1 });
       return;
     }
 
     // Keep veil opacity at 1 so backdrop-filter frost stays alive; fade bg alpha + content.
-    gsap.set(veil, { backgroundColor: "rgba(0,0,0,0)", autoAlpha: 1 });
+    gsap.set(root, { autoAlpha: 1 });
+    gsap.set(veil, {
+      backgroundColor: "rgba(0,0,0,0)",
+      autoAlpha: 1,
+      backdropFilter: VEIL_BLUR,
+      webkitBackdropFilter: VEIL_BLUR,
+    });
     gsap.set(content, { autoAlpha: 0 });
     gsap.to(veil, {
       backgroundColor: "rgba(0,0,0,0.45)",
@@ -58,22 +74,31 @@ export function PhotoLightbox({ src, alt, open, onClose }: PhotoLightboxProps) {
 
   const animateOut = useCallback(() => {
     return new Promise<void>((resolve) => {
+      const root = rootRef.current;
       const veil = veilRef.current;
       const content = contentRef.current;
-      if (!veil || !content || prefersReducedMotion()) {
+      if (!root || !veil || !content || prefersReducedMotion()) {
         resolve();
         return;
       }
-      gsap.killTweensOf([veil, content]);
+      gsap.killTweensOf([root, veil, content]);
+      // Collapse blur with the tint — leaving full frost then unmounting caused a snap flash.
       gsap.to(content, {
         autoAlpha: 0,
-        duration: 0.2,
+        duration: 0.16,
         ease: "power2.out",
       });
       gsap.to(veil, {
         backgroundColor: "rgba(0,0,0,0)",
+        backdropFilter: VEIL_CLEAR,
+        webkitBackdropFilter: VEIL_CLEAR,
         duration: 0.22,
-        ease: "power2.out",
+        ease: "power2.in",
+      });
+      gsap.to(root, {
+        autoAlpha: 0,
+        duration: 0.22,
+        ease: "power2.in",
         onComplete: () => resolve(),
       });
     });
@@ -81,9 +106,11 @@ export function PhotoLightbox({ src, alt, open, onClose }: PhotoLightboxProps) {
 
   useEffect(() => {
     if (open) {
-      closingRef.current = false;
-      enteredRef.current = false;
-      setMounted(true);
+      if (!mounted) {
+        closingRef.current = false;
+        enteredRef.current = false;
+        setMounted(true);
+      }
       return;
     }
     if (!mounted || closingRef.current) return;
@@ -119,17 +146,22 @@ export function PhotoLightbox({ src, alt, open, onClose }: PhotoLightboxProps) {
 
   return createPortal(
     <div
+      ref={rootRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
       className="photo-lightbox fixed inset-0 z-[100] flex items-center justify-center p-6"
       onClick={onClose}
     >
-      {/* Frost stays at full opacity — only tint alpha animates (opacity would kill blur). */}
+      {/* Frost stays at full opacity on open — only tint alpha animates (opacity would kill blur). */}
       <div
         ref={veilRef}
-        className="photo-lightbox__veil absolute inset-0 backdrop-blur-2xl backdrop-saturate-125"
-        style={{ backgroundColor: "rgba(0,0,0,0)" }}
+        className="photo-lightbox__veil absolute inset-0"
+        style={{
+          backgroundColor: "rgba(0,0,0,0)",
+          backdropFilter: VEIL_BLUR,
+          WebkitBackdropFilter: VEIL_BLUR,
+        }}
       />
       <p id={titleId} className="sr-only">
         {alt || "Photo"}

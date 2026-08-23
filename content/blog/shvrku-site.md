@@ -1,15 +1,17 @@
 ---
 type: case-study
-title: Shvrku-Site
-description: "Experimental day one prototype before the final product."
+title: shvrku-site
+description: "Day-one experimental portfolio — the prototype before recon."
 date: "2024-07-16"
-updated: "2021-8-8"
+updated: "2026-08-23"
 kind: Coding Project
-year: "2024-2026"
-role: "Software Engineering"
+year: "2024"
+role: "Design & engineering"
 image: "/images/project-shvrku-site.png"
 ---
 
 ## Overview
 
-This was the inital prototype before the current shvrku-recon website you are viewing on.[Shvrku-site](https://shvrku.vercel.app) walked so [shvrku.recon](https://shvrku.recon.asia) could run. 
+[shvrku-site](https://shvrku.vercel.app) was the 2024 SHVRKU portfolio — aspire greatness, artform-led hero, early work and experiments.
+
+It followed [Home V2](https://shvrku-homev2.vercel.app) and walked so [shvrku.recon](https://shvrku.recon.asia) could run: same identity, tighter systems, fewer leftovers.

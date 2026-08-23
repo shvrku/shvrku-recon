@@ -180,6 +180,11 @@ html[data-theme="light"] ::selection {
   opacity: 0.72;
 }
 
+/** WebGL paints these slots, so the blurred stand-in would only show through the curl. */
+.photo-field--gl .photo-field__stand-in {
+  opacity: 0;
+}
+
 .photo-field__mist {
   position: absolute;
   inset: -6%;

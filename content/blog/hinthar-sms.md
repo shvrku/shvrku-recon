@@ -1,29 +1,17 @@
 ---
 type: case-study
 title: Hinthar School Management System
-description: "So goodbye to stacks of papers and manual signature attendances. Say hello to the all new digital school system "
+description: "Paper stacks and signature logs out. A role-aware school workspace in."
 date: "2026-07-08"
-updated: "2026-08-22"
+updated: "2026-08-23"
 kind: Coding Project
 year: "2026–Present"
-role: "Design direction, interface, Backend Designing"
+role: "Design direction, interface, backend"
 image: "/images/project-hinthar-sms.png"
 ---
 
 ## Overview
 
-Hinthar is a school management system for people, classes, timetabling, lesson attendance, and campus check-in.
+Hinthar SMS is the school system I’m building at Hinthar — people, classes, timetables, lesson attendance, and campus check-in in one material workspace.
 
-## What we built
-
-- People & catalog - students, teachers, staff, and subjects
-- Classes - cohorts and enrollment
-- Timetable & sessions - recurring weekly slots and dated class sessions
-- Lesson attendance - per-session roll and class attendance matrices
-- Campus check-in - QR and manual daily presence
-- Role-aware UI - views and actions gated by school role
-
-## Outcome
-
-The interface had to feel like a material workspace - fast enough for daily use, quiet enough to trust during review.
-
+Daily ops stay fast: catalog and enrollment, recurring slots and dated sessions, per-session roll, QR or manual presence, and views gated by school role.
