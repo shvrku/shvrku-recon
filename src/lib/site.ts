@@ -65,9 +65,7 @@ export const site = {
   footerQuote: "Refuse to be underestimated.",
   email: "shvrku@gmail.com",
   year: 2026,
-  socials: [,
-    { label: "GitHub", href: "https://github.com/shvrku" },,
-  ],
+  socials: [{ label: "GitHub", href: "https://github.com/shvrku" }],
 };
 
 /** Homepage work grid — visual/layout only. Links to `/blog/{slug}` when a write-up exists. */
